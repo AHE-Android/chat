@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
 import android.util.Log;
@@ -57,6 +58,7 @@ class User{
 public class Chat extends AppCompatActivity {
     private Vector<TextView> chatItems = new Vector();
     private Map<String, User> user = new HashMap<String, User>();
+    private Boolean exit = false;
     FloatingActionButton button;
 
     @Override
@@ -82,6 +84,7 @@ public class Chat extends AppCompatActivity {
                     case "Tryb ukrycia": spy(); break;
                     case "Wyczyść czat": clearChatContent(10); break;
                     case "Wyloguj się": logout(); break;
+                    case "Wyjdź": exitAPP(); break;
                     default: Toast.makeText(Chat.this, "Opcja: "+item.getTitle()+", narazie nie jest wspierana", Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -106,7 +109,7 @@ public class Chat extends AppCompatActivity {
                     }
                     else sendMessageToDb(getUsername(), msg);
                  break;
-                case ".exit": sendMessageToDb(getUsername(), "Opuścił czat"); break;
+                case ".exit": exitAPP(); break;
                 default: {
                     if (msg.matches("(.clear )\\d+"))
                         clearChatContent(Integer.valueOf(msg.substring(msg.lastIndexOf(" ") + 1)));
@@ -349,5 +352,25 @@ public class Chat extends AppCompatActivity {
                     Log.e("ERROR", "Error getting documents: ", task.getException());
                 }
             });
+    }
+    public void exitAPP(){
+        if (exit) {
+            sendMessageToDb(getUsername(), "Opuścił czat");
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Kliknij ponownie by wyjść.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(() -> exit = false, 3 * 1000);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitAPP();
     }
 }
