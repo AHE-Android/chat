@@ -1,5 +1,4 @@
 package com.example.a4;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.os.Message;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,6 +35,8 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import android.view.View;
 import android.widget.PopupMenu;
+import static android.view.MotionEvent.ACTION_DOWN;
+import static android.view.MotionEvent.ACTION_UP;
 
 class User{
     private String login;
@@ -59,6 +61,7 @@ public class Chat extends AppCompatActivity {
     private Vector<TextView> chatItems = new Vector();
     private Map<String, User> user = new HashMap<String, User>();
     private Boolean exit = false;
+    float x1,x2,y1,y2;
     FloatingActionButton button;
 
     @Override
@@ -372,5 +375,36 @@ public class Chat extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         exitAPP();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event){
+        this.onTouchEvent(event);
+        return super.dispatchTouchEvent(event);
+    }
+
+    public boolean onTouchEvent(MotionEvent touchEvent){
+        switch(touchEvent.getAction()){
+            case ACTION_DOWN:
+                x1 = touchEvent.getX();
+                y1 = touchEvent.getY();
+                break;
+            case ACTION_UP:
+                x2 = touchEvent.getX();
+                y2 = touchEvent.getY();
+                if(x1 < x2){
+                    if(x2 - x1 > 250) {
+                        Intent i = new Intent(Chat.this, CustomActivity.class);
+                        startActivity(i);
+                    }
+            }else if(x1 > x2){
+                    if(x1 - x2 > 250) {
+                        Intent i = new Intent(Chat.this, SettingsActivity.class);
+                        startActivity(i);
+                    }
+            }
+            break;
+        }
+        return false;
     }
 }
