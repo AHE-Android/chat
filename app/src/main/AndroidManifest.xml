@@ -20,6 +20,8 @@
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RegulaminActivity" />
+        <activity android:name=".SettingsActivity"/>
+        <activity android:name=".CustomActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
